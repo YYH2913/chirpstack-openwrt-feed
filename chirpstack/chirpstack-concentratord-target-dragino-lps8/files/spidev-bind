@@ -1,0 +1,28 @@
+#!/bin/sh /etc/rc.common
+
+START=10
+STOP=10
+USE_PROCD=1
+
+start() {
+	# Ensure spidev driver is present
+	modprobe spidev 2>/dev/null || true
+
+	# Bind spidev to spi-gpio-created device
+	for dev in spi1.0 spi0.0; do
+		if [ -d "/sys/bus/spi/devices/$dev" ]; then
+			# Prefer driver_override when available
+			echo spidev > "/sys/bus/spi/devices/$dev/driver_override" 2>/dev/null || true
+			if [ -d /sys/bus/spi/drivers/spidev ]; then
+				echo "$dev" > /sys/bus/spi/drivers/spidev/bind 2>/dev/null || true
+			fi
+		fi
+	done
+
+	# Provide legacy path expected by some apps
+	if [ ! -e /dev/spidev0.0 ] && [ -e /dev/spidev1.0 ]; then
+		ln -sf /dev/spidev1.0 /dev/spidev0.0
+	fi
+}
+
+

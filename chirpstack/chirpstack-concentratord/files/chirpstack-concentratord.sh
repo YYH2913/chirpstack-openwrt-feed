@@ -5,6 +5,10 @@ configure() {
 	mkdir -p /var/etc/$config_name
 	config_load "$config_name"
 	config_foreach conf_rule_global "global" "$config_name"
+	# Ensure spidev path for sx1301 stack
+	if [ ! -e /dev/spidev0.0 ] && [ -e /dev/spidev1.0 ]; then
+		ln -sf /dev/spidev1.0 /dev/spidev0.0
+	fi
 }
 
 conf_rule_global() {

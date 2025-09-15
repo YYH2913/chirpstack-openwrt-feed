@@ -7,5 +7,5 @@
 -#define SPI_SPEED       8000000
 +#define SPI_SPEED       2000000
  // default SPI path
- char spi_dev_path[50] = "/dev/spidev0.0";
+ char spi_dev_path[50] = "/dev/spidev1.0";
 
